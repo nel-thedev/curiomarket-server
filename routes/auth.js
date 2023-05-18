@@ -8,76 +8,113 @@ const saltRounds = 10;
 
 // POST  /auth/signup
 // ...
-router.post('/signup', (req, res, next) => {
+
+router.post('/signup', async (req, res) => {
   const { email, password, fullName } = req.body;
+  try {
+    if (!email || !password || !fullName) {
+      return res.status(400).json({ msg: 'provide email, password and name' });
+    }
+    const findUser = await User.findOne({ email: email });
+    if (findUser) {
+      return res.status(400).json({ msg: 'email already exists' });
+    }
 
-  // Check if the email or password or name is provided as an empty string
-  if (email === '' || password === '' || fullName === '') {
-    res.status(400).json({ message: 'Provide email, password and name' });
-    return;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hashedPassword = bcrypt.hashSync(password, salt);
+
+    const user = await User.create({
+      email,
+      password: hashedPassword,
+      fullName,
+    });
+    delete user._doc.password;
+
+    // Create a new object that doesn't expose the password
+
+    // Send a json response containing the user object
+
+    const authToken = jwt.sign({ payload: user }, process.env.SECRET, {
+      algorithm: 'HS256',
+      expiresIn: '6h',
+    });
+
+    console.log('Signup line 58', user);
+
+    return res.status(201).json({ authToken: authToken, user: user });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
   }
+});
 
-  // Check the users collection if a user with the same email already exists
-  User.findOne({ email })
-    .then((foundUser) => {
-      // If the user with the same email already exists, send an error response
-      if (foundUser) {
-        res.status(400).json({ message: 'Email already in use.' });
-        return;
-      }
+// POST  /auth/login
+// ...
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-      // If the email is unique, proceed to hash the password
-      const salt = bcrypt.genSaltSync(saltRounds);
-      const hashedPassword = bcrypt.hashSync(password, salt);
+    if (email === '' || password === '') {
+      res.status(400).json({ message: 'Provide email and password.' });
+      return;
+    }
 
-      // Create a new user in the database
-      // We return a pending promise, which allows us to chain another `then`
-      return User.create({ email, password: hashedPassword, fullName });
-    })
-    .then((createdUser) => {
-      // Deconstruct the newly created user object to omit the password
-      // We should never expose passwords publicly
-      console.log(createdUser);
-      const { email, _id, fullName } = createdUser;
+    const findUser = await User.findOne({ email });
+    if (!findUser) {
+      // If the user is not found, send an error response
+      res.status(401).json({ message: 'User not found.' });
+      return;
+    }
 
-      // Create a new object that doesn't expose the password
-      const payload = {
-        email,
+    const passwordCorrect = bcrypt.compareSync(password, findUser.password);
+
+    if (passwordCorrect) {
+      // Deconstruct the user object to omit the password
+      const {
         _id,
+        email,
         fullName,
+        location,
+        age,
+        profilePic,
+        visitedCountries,
+      } = findUser;
+
+      // Create an object that will be set as the token payload
+      const payload = {
+        _id,
+        email,
+        fullName,
+        location,
+        age,
+        profilePic,
+        visitedCountries,
       };
 
-      // Send a json response containing the user object
-
+      // Create and sign the token
       const authToken = jwt.sign(payload, process.env.SECRET, {
         algorithm: 'HS256',
         expiresIn: '6h',
       });
 
-      console.log('Signup line 58', payload);
-
-      res.status(201).json({ authToken: authToken, user: payload });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json({ message: 'Internal Server Error' });
-    });
+      // Send the token as the response
+      res.status(200).json({ authToken: authToken, user: payload });
+    } else {
+      res.status(401).json({ message: 'Unable to authenticate the user' });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
 });
 
-// POST  /auth/login
-// ...
 router.post('/login', (req, res, next) => {
   const { email, password } = req.body;
 
   // Check if email or password are provided as empty string
-  if (email === '' || password === '') {
-    res.status(400).json({ message: 'Provide email and password.' });
-    return;
-  }
 
   // Check the users collection if a user with the same email exists
   User.findOne({ email })
-    .populate('visitedCountries')
     .then((foundUser) => {
       if (!foundUser) {
         // If the user is not found, send an error response
@@ -140,7 +177,5 @@ router.get('/verify', (req, res, next) => {
   // previously set as the token payload
   res.status(200).json(req.user);
 });
-
-module.exports = router;
 
 module.exports = router;
