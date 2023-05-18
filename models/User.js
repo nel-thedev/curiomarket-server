@@ -11,7 +11,11 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    fullName: String,
+    fullName: {
+      type: String,
+      required: true,
+    },
+    profilePicture: String,
     stores: [{ type: Schema.Types.ObjectId, ref: 'Store' }],
   },
   {
