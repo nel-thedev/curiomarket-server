@@ -108,61 +108,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/login', (req, res, next) => {
-  const { email, password } = req.body;
-
-  // Check if email or password are provided as empty string
-
-  // Check the users collection if a user with the same email exists
-  User.findOne({ email })
-    .then((foundUser) => {
-      if (!foundUser) {
-        // If the user is not found, send an error response
-        res.status(401).json({ message: 'User not found.' });
-        return;
-      }
-
-      // Compare the provided password with the one saved in the database
-      const passwordCorrect = bcrypt.compareSync(password, foundUser.password);
-
-      if (passwordCorrect) {
-        // Deconstruct the user object to omit the password
-        const {
-          _id,
-          email,
-          fullName,
-          location,
-          age,
-          profilePic,
-          visitedCountries,
-        } = foundUser;
-
-        // Create an object that will be set as the token payload
-        const payload = {
-          _id,
-          email,
-          fullName,
-          location,
-          age,
-          profilePic,
-          visitedCountries,
-        };
-
-        // Create and sign the token
-        const authToken = jwt.sign(payload, process.env.SECRET, {
-          algorithm: 'HS256',
-          expiresIn: '6h',
-        });
-
-        // Send the token as the response
-        res.status(200).json({ authToken: authToken, user: payload });
-      } else {
-        res.status(401).json({ message: 'Unable to authenticate the user' });
-      }
-    })
-    .catch((err) => res.status(500).json({ message: 'Internal Server Error' }));
-});
-
 // GET  /auth/verify
 // ...
 
