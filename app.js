@@ -8,6 +8,8 @@ var cors = require('cors');
 var authRouter = require('./routes/auth');
 var userRouter = require('./routes/user');
 var storeRouter = require('./routes/store');
+var itemRouter = require('./routes/item');
+var commentRouter = require('./routes/comment');
 
 var app = express();
 
@@ -29,6 +31,8 @@ app.use(
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/store', storeRouter);
+app.use('/item', itemRouter);
+app.use('/comment', commentRouter);
 
 mongoose
   .connect(process.env.MONGODB_URI)
