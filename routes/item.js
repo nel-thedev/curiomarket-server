@@ -7,37 +7,11 @@ router.get('/details/:id', async (req, res, next) => {
   try {
     const foundItem = await Item.findById(req.params.id).populate('comments');
 
-    res.json(foundItem);
+    return res.json(foundItem);
   } catch (error) {
     console.log(error);
+    return res.status(500).json(error);
   }
-});
-
-router.post('/create', async (req, res, next) => {
-  const { name, description, quantity, imageUrl, value, isForSale } = req.body;
-  try {
-    if (!name) {
-      return res
-        .status(400)
-        .json({ msg: 'Please provide a name for the item' });
-    }
-
-    const createdItem = await Item.create({
-      name,
-      description,
-      quantity,
-      imageUrl,
-      value,
-      isForSale,
-      store, //HELP MAYBE PUT THIS IN STORE ROUTE???????
-    });
-
-    Store.findByIdAndUpdate(createdItem.store, {
-      $push: { items: createdItem._id },
-    });
-
-    res.json(createdItem);
-  } catch (error) {}
 });
 
 // name: {

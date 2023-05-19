@@ -7,9 +7,10 @@ router.get('/profile/:id', async (req, res, next) => {
   try {
     const foundUser = await User.findById(req.params.id).populate('stores');
 
-    res.json(foundUser);
+    return res.json(foundUser);
   } catch (error) {
     console.log(error);
+    return res.status(500).json(error);
   }
 });
 

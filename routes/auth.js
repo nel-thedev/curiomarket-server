@@ -70,25 +70,15 @@ router.post('/login', async (req, res) => {
 
     if (passwordCorrect) {
       // Deconstruct the user object to omit the password
-      const {
-        _id,
-        email,
-        fullName,
-        location,
-        age,
-        profilePic,
-        visitedCountries,
-      } = findUser;
+      const { _id, email, fullName, profilePicture, stores } = findUser;
 
       // Create an object that will be set as the token payload
       const payload = {
         _id,
         email,
         fullName,
-        location,
-        age,
-        profilePic,
-        visitedCountries,
+        profilePicture,
+        stores,
       };
 
       // Create and sign the token
@@ -98,9 +88,11 @@ router.post('/login', async (req, res) => {
       });
 
       // Send the token as the response
-      res.status(200).json({ authToken: authToken, user: payload });
+      return res.status(200).json({ authToken: authToken, user: payload });
     } else {
-      res.status(401).json({ message: 'Unable to authenticate the user' });
+      return res
+        .status(401)
+        .json({ message: 'Unable to authenticate the user' });
     }
   } catch (error) {
     console.log(error);
