@@ -13,7 +13,6 @@ const itemSchema = new Schema(
     isForSale: Boolean,
     store: { type: Schema.Types.ObjectId, ref: 'Store' },
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
-    ratings: [{ type: Schema.Types.ObjectId, ref: 'Rating' }],
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
   },
   {

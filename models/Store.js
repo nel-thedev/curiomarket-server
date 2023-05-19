@@ -7,7 +7,10 @@ const storeSchema = new Schema(
       required: true,
       unique: true,
     },
-    description: String,
+    description: {
+      type: String,
+      required: true,
+    },
     items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
     ratings: [{ type: Schema.Types.ObjectId, ref: 'Rating' }],
