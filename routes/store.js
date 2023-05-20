@@ -70,6 +70,7 @@ router.post(
           value,
           isForSale,
           store: req.params.id,
+          owner: req.user._id,
         });
 
         await Store.findByIdAndUpdate(req.params.id, {

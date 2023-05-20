@@ -17,7 +17,7 @@ router.get('/profile/:id', async (req, res, next) => {
 
 router.post('/update', isAuthenticated, async (req, res, next) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(req.body._id, req.body, {
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, req.body, {
       new: true,
     });
 

@@ -14,14 +14,36 @@ router.get('/details/:id', async (req, res, next) => {
   }
 });
 
-// name: {
-//     type: String,
-//     required: true,
-//   },
-//   description: String,
-//   quantity: Number,
-//   imageUrl: String,
-//   value: Number,
-//   isForSale: Boolean,
+router.post('/edit-item', isAuthenticated, async (req, res, next) => {
+  if (req.user._id === req.body.owner) {
+    try {
+      if (!name) {
+        return res
+          .status(400)
+          .json({ msg: 'Please provide a name for the item' });
+      }
+
+      const updatedItem = await Item.findByIdAndUpdate(
+        req.body._id,
+        {
+          name,
+          description,
+          quantity,
+          imageUrl,
+          value,
+          isForSale,
+        },
+        {
+          new: true,
+        }
+      );
+
+      return res.json(updatedItem);
+    } catch (error) {
+      console.log(error);
+      return res.json(error);
+    }
+  } else return res.json({ message: 'Not permitted.' });
+});
 
 module.exports = router;
