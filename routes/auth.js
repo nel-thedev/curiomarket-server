@@ -3,6 +3,7 @@ var router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const isAuthenticated = require('../middleware/isAuthenticated');
 
 const saltRounds = 10;
 
@@ -103,7 +104,7 @@ router.post('/login', async (req, res) => {
 // GET  /auth/verify
 // ...
 
-router.get('/verify', (req, res, next) => {
+router.get('/verify', isAuthenticated, (req, res, next) => {
   // <== CREATE NEW ROUTE
 
   // If JWT token is valid the payload gets decoded by the
