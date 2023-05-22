@@ -24,7 +24,7 @@ app.enable('trust proxy');
 
 app.use(
   cors({
-    origin: ['http://localhost:4000'],
+    origin: ['http://localhost:3000', 'http://192.168.1.174:3000'],
   })
 );
 

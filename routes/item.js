@@ -6,8 +6,10 @@ var router = express.Router();
 
 router.get('/details/:id', async (req, res, next) => {
   try {
-    const foundItem = await Item.findById(req.params.id).populate('comments');
-
+    const foundItem = await Item.findById(req.params.id).populate({
+      path: 'comments',
+      populate: { path: 'author' },
+    });
     return res.json(foundItem);
   } catch (error) {
     console.log(error);

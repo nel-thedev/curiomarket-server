@@ -13,7 +13,7 @@ const itemSchema = new Schema(
     isForSale: Boolean,
     store: { type: Schema.Types.ObjectId, ref: 'Store' },
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
-    comments: [{ type: Schema.Types.ObjectId, ref: 'Comments' }],
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
   },
   {
     timeseries: true,

@@ -5,13 +5,21 @@ const User = require('../models/User');
 const Item = require('../models/Item');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
+router.get('/all', async (req, res, next) => {
+  try {
+    const allStores = await Store.find().sort({ createdAt: -1 });
+    return res.json(allStores);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 router.get('/shop/:id', async (req, res, next) => {
   try {
-    const foundStore = await Store.findById(req.params.id)
-      .populate('items')
-      .populate('ratings');
+    const foundStore = await Store.findById(req.params.id).populate('items');
+    // .populate('ratings');
 
-    res.json(foundStore);
+    return res.json(foundStore);
   } catch (error) {
     console.log(error);
   }
