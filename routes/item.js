@@ -1,6 +1,7 @@
 var express = require('express');
 const Item = require('../models/Item');
 const Store = require('../models/Store');
+const isAuthenticated = require('../middleware/isAuthenticated');
 var router = express.Router();
 
 router.get('/details/:id', async (req, res, next) => {
@@ -44,6 +45,18 @@ router.post('/edit-item', isAuthenticated, async (req, res, next) => {
       return res.json(error);
     }
   } else return res.json({ message: 'Not permitted.' });
+});
+
+router.get('/delete/:id', isAuthenticated, async (req, res, next) => {
+  const deletedItem = await Item.findByIdAndDelete(req.params.id);
+
+  await Store.findByIdAndUpdate(
+    deletedItem.store,
+    {
+      $pull: { items: deletedItem._id },
+    },
+    { new: true }
+  );
 });
 
 module.exports = router;
