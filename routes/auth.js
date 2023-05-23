@@ -60,7 +60,10 @@ router.post('/login', async (req, res) => {
       return;
     }
 
-    const findUser = await User.findOne({ email });
+    const findUser = await User.findOne({ email }).populate({
+      path: 'stores',
+      populate: { path: 'items owner' },
+    });
     if (!findUser) {
       // If the user is not found, send an error response
       res.status(401).json({ message: 'User not found.' });
