@@ -41,7 +41,7 @@ router.post('/create', isAuthenticated, async (req, res, next) => {
     const createdStore = await Store.create({
       name,
       description,
-      owner,
+      owner: req.user._id,
     });
 
     await User.findByIdAndUpdate(req.user._id, {
@@ -62,35 +62,33 @@ router.post(
     const { name, description, quantity, imageUrl, value, isForSale } =
       req.body;
 
-    if (req.user.stores.includes(req.params.id)) {
-      try {
-        if (!name) {
-          return res
-            .status(400)
-            .json({ msg: 'Please provide a name for the item' });
-        }
-
-        const createdItem = await Item.create({
-          name,
-          description,
-          quantity,
-          imageUrl,
-          value,
-          isForSale,
-          store: req.params.id,
-          owner: req.user._id,
-        });
-
-        await Store.findByIdAndUpdate(req.params.id, {
-          $push: { items: createdItem._id },
-        });
-
-        return res.json(createdItem);
-      } catch (error) {
-        console.log(error);
-        return res.json(error);
+    try {
+      if (!name) {
+        return res
+          .status(400)
+          .json({ msg: 'Please provide a name for the item' });
       }
-    } else return res.json({ message: 'Not permitted.' });
+
+      const createdItem = await Item.create({
+        name,
+        description,
+        quantity,
+        imageUrl,
+        value,
+        isForSale,
+        store: req.params.id,
+        owner: req.user._id,
+      });
+
+      await Store.findByIdAndUpdate(req.params.id, {
+        $push: { items: createdItem._id },
+      });
+
+      return res.json(createdItem);
+    } catch (error) {
+      console.log(error);
+      return res.json(error);
+    }
   }
 );
 
