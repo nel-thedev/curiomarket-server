@@ -4,6 +4,7 @@ const Store = require('../models/Store');
 const User = require('../models/User');
 const Item = require('../models/Item');
 const isAuthenticated = require('../middleware/isAuthenticated');
+const { response } = require('../app');
 
 router.get('/all', async (req, res, next) => {
   try {
@@ -91,5 +92,38 @@ router.post(
     }
   }
 );
+
+router.post('/edit/:id', isAuthenticated, async (req, res, next) => {
+  const { name, description, storeImage } = req.body;
+  if (req.user._id === req.body.owner) {
+    try {
+      if (!name) {
+        return res
+          .status(400)
+          .json({ msg: 'Please provide a name for the store' });
+      }
+      console.log('getting to the backend');
+      const updatedStore = await Store.findByIdAndUpdate(
+        req.body._id,
+        {
+          name,
+          description,
+          storeImage,
+        },
+        {
+          new: true,
+        }
+      );
+      const updatedUser = await User.findById(req.user._id).populate('stores');
+
+      console.log('UPDATED STORE', updatedStore);
+      console.log('UPDATED USER', updatedUser);
+      return res.json({ updatedStore: updatedStore, updatedUser: updatedUser });
+    } catch (error) {
+      console.log(error);
+      return res.json(error);
+    }
+  } else return res.json({ message: 'Not permitted.' });
+});
 
 module.exports = router;

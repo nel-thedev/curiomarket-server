@@ -1,6 +1,7 @@
 var express = require('express');
 const User = require('../models/User');
 const isAuthenticated = require('../middleware/isAuthenticated');
+const jwt = require('jsonwebtoken');
 var router = express.Router();
 
 /* GET users listing. */

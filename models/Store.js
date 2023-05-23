@@ -11,6 +11,7 @@ const storeSchema = new Schema(
       type: String,
       required: true,
     },
+    storeImage: String,
     items: [{ type: Schema.Types.ObjectId, ref: 'Item' }],
     owner: { type: Schema.Types.ObjectId, ref: 'User' },
     ratings: [{ type: Schema.Types.ObjectId, ref: 'Rating' }],

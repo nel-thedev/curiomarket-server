@@ -10,6 +10,7 @@ var userRouter = require('./routes/user');
 var storeRouter = require('./routes/store');
 var itemRouter = require('./routes/item');
 var commentRouter = require('./routes/comment');
+var photoRouter = require('./routes/photo');
 
 var app = express();
 
@@ -33,6 +34,7 @@ app.use('/user', userRouter);
 app.use('/store', storeRouter);
 app.use('/item', itemRouter);
 app.use('/comment', commentRouter);
+app.use('/photo', photoRouter);
 
 mongoose
   .connect(process.env.MONGODB_URI)
