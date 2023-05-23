@@ -11,38 +11,43 @@ const saltRounds = 10;
 // ...
 
 router.post('/signup', async (req, res) => {
-  const { email, password, fullName } = req.body;
   try {
+    const { email, password, fullName } = req.body;
+
     if (!email || !password || !fullName) {
       return res.status(400).json({ msg: 'provide email, password and name' });
     }
     const findUser = await User.findOne({ email: email });
     if (findUser) {
       return res.status(400).json({ msg: 'email already exists' });
+    } else {
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hashedPassword = bcrypt.hashSync(password, salt);
+
+      const user = await User.create({
+        email,
+        password: hashedPassword,
+        fullName,
+        profilePicture: '',
+        stores: [],
+      });
+      delete user._doc.password;
+
+      console.log('user after signup', user);
+
+      // Create a new object that doesn't expose the password
+
+      // Send a json response containing the user object
+
+      const authToken = jwt.sign(user.toJSON(), process.env.SECRET, {
+        algorithm: 'HS256',
+        expiresIn: '6h',
+      });
+
+      console.log('Signup line 58', user);
+
+      return res.status(201).json({ authToken: authToken, user: user });
     }
-
-    const salt = bcrypt.genSaltSync(saltRounds);
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-      fullName,
-    });
-    delete user._doc.password;
-
-    // Create a new object that doesn't expose the password
-
-    // Send a json response containing the user object
-
-    const authToken = jwt.sign({ payload: user }, process.env.SECRET, {
-      algorithm: 'HS256',
-      expiresIn: '6h',
-    });
-
-    console.log('Signup line 58', user);
-
-    return res.status(201).json({ authToken: authToken, user: user });
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
