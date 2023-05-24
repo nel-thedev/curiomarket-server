@@ -87,7 +87,6 @@ router.post('/login', async (req, res) => {
         email,
         fullName,
         profilePicture,
-        stores,
       };
 
       // Create and sign the token
@@ -119,9 +118,15 @@ router.get('/verify', isAuthenticated, (req, res, next) => {
   // isAuthenticated middleware and made available on `req.payload`
   console.log('req.user', req.user);
 
+  User.findById(req.user._id)
+    .populate('stores')
+    .then((results) => {
+      res.status(200).json(results);
+    })
+    .catch((error) => console.log(error));
+
   // Send back the object with user data
   // previously set as the token payload
-  res.status(200).json(req.user);
 });
 
 module.exports = router;

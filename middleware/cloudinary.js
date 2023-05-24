@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     allowed_formats: ['jpg', 'jpeg', 'png'],
-    folder: 'march2023-countries-code-along',
+    folder: 'curiomarket',
   },
 });
 
