@@ -27,7 +27,7 @@ router.get('/shop/:id', async (req, res, next) => {
 });
 
 router.post('/create', isAuthenticated, async (req, res, next) => {
-  const { name, description } = req.body;
+  const { name, description, storeImage } = req.body;
   try {
     if (!name || !description) {
       return res
@@ -43,13 +43,14 @@ router.post('/create', isAuthenticated, async (req, res, next) => {
       name,
       description,
       owner: req.user._id,
+      storeImage,
     });
 
-    await User.findByIdAndUpdate(req.user._id, {
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, {
       $push: { stores: createdStore._id },
     });
 
-    return res.json(createdStore);
+    return res.json({ createdStore: createdStore, updatedUser: updatedUser });
   } catch (error) {
     console.log(error);
     return res.json(error);
