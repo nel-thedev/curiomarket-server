@@ -46,9 +46,13 @@ router.post('/create', isAuthenticated, async (req, res, next) => {
       storeImage,
     });
 
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, {
-      $push: { stores: createdStore._id },
-    });
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $push: { stores: createdStore._id },
+      },
+      { new: true }
+    ).populate('stores');
 
     return res.json({ createdStore: createdStore, updatedUser: updatedUser });
   } catch (error) {
