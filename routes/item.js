@@ -51,14 +51,17 @@ router.post('/edit-item', isAuthenticated, async (req, res, next) => {
 
 router.get('/delete/:id', isAuthenticated, async (req, res, next) => {
   const deletedItem = await Item.findByIdAndDelete(req.params.id);
+  console.log('deletedItem', deletedItem);
 
-  await Store.findByIdAndUpdate(
+  const updatedStore = await Store.findByIdAndUpdate(
     deletedItem.store,
     {
       $pull: { items: deletedItem._id },
     },
     { new: true }
   );
+
+  return res.json(deletedItem);
 });
 
 module.exports = router;
