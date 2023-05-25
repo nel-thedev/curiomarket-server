@@ -24,14 +24,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('trust proxy', 1);
 app.enable('trust proxy');
 
-app.use(
-  cors({
-    origin: [
-      'https://main--rococo-semifreddo-f6db94.netlify.app',
-      'http://localhost:3000',
-    ],
-  })
-);
+app.use(cors());
+// app.use(
+//   cors({
+//     origin: [
+//       'https://main--rococo-semifreddo-f6db94.netlify.app',
+//       'http://localhost:3000',
+//     ],
+//   })
+// );
 // app.use(
 //   cors({
 //     origin: ['http://localhost:3000', 'http://192.168.1.174:3000'],

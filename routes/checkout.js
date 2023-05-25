@@ -7,31 +7,38 @@ const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
 const router = express.Router();
 
-const YOUR_DOMAIN = 'https://main--rococo-semifreddo-f6db94.netlify.app';
+const YOUR_DOMAIN = 'http://localhost:3000';
+// const YOUR_DOMAIN = 'https://main--rococo-semifreddo-f6db94.netlify.app';
 
 router.post('/create-checkout-session', async (req, res) => {
   console.log('REQUEST BODY FOR PAY', req.body);
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-        price_data: {
-          product_data: {
-            name: req.body.name,
-            description: req.body.description,
-            images: [req.data.imageUrl],
-          },
-          unit_amount: req.body.value,
+
+  const cart = req.body.map((item) => {
+    const itemObject = {
+      price_data: {
+        currency: 'usd',
+        product_data: {
+          name: item.name,
+          description: item.description,
+          images: [item.imageUrl],
         },
-        quantity: req.body.quantity,
+        unit_amount: item.value,
       },
-    ],
+      quantity: item.quantity || 1,
+    };
+    return itemObject;
+  });
+
+  console.log('CART', cart);
+  const session = await stripe.checkout.sessions.create({
+    line_items: cart,
+
     mode: 'payment',
     success_url: `${YOUR_DOMAIN}/order?success=true`,
     cancel_url: `${YOUR_DOMAIN}/order?canceled=true`,
   });
 
-  res.redirect(303, session.url);
+  res.json({ url: session.url });
 });
 
 module.exports = router;
