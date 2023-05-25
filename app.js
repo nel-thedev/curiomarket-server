@@ -11,6 +11,7 @@ var storeRouter = require('./routes/store');
 var itemRouter = require('./routes/item');
 var commentRouter = require('./routes/comment');
 var photoRouter = require('./routes/photo');
+var checkoutRouter = require('./routes/checkout');
 
 var app = express();
 
@@ -25,9 +26,17 @@ app.enable('trust proxy');
 
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://192.168.1.174:3000'],
+    origin: [
+      'https://main--rococo-semifreddo-f6db94.netlify.app',
+      'http://localhost:3000',
+    ],
   })
 );
+// app.use(
+//   cors({
+//     origin: ['http://localhost:3000', 'http://192.168.1.174:3000'],
+//   })
+// );
 
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
@@ -35,6 +44,7 @@ app.use('/store', storeRouter);
 app.use('/item', itemRouter);
 app.use('/comment', commentRouter);
 app.use('/photo', photoRouter);
+app.use('/checkout', checkoutRouter);
 
 mongoose
   .connect(process.env.MONGODB_URI)
