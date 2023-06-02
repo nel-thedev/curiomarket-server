@@ -11,8 +11,6 @@ const YOUR_DOMAIN = 'http://localhost:3000';
 // const YOUR_DOMAIN = 'https://main--rococo-semifreddo-f6db94.netlify.app';
 
 router.post('/create-checkout-session', async (req, res) => {
-  console.log('REQUEST BODY FOR PAY', req.body);
-
   const cart = req.body.map((item) => {
     const itemObject = {
       price_data: {

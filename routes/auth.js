@@ -33,8 +33,6 @@ router.post('/signup', async (req, res) => {
       });
       delete user._doc.password;
 
-      console.log('user after signup', user);
-
       // Create a new object that doesn't expose the password
 
       // Send a json response containing the user object
@@ -43,8 +41,6 @@ router.post('/signup', async (req, res) => {
         algorithm: 'HS256',
         expiresIn: '6h',
       });
-
-      console.log('Signup line 58', user);
 
       return res.status(201).json({ authToken: authToken, user: user });
     }
@@ -116,7 +112,6 @@ router.get('/verify', isAuthenticated, (req, res, next) => {
 
   // If JWT token is valid the payload gets decoded by the
   // isAuthenticated middleware and made available on `req.payload`
-  console.log('req.user', req.user);
 
   User.findById(req.user._id)
     .populate('stores')

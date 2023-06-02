@@ -107,7 +107,6 @@ router.post('/edit/:id', isAuthenticated, async (req, res, next) => {
           .status(400)
           .json({ msg: 'Please provide a name for the store' });
       }
-      console.log('getting to the backend');
       const updatedStore = await Store.findByIdAndUpdate(
         req.body._id,
         {
@@ -121,8 +120,6 @@ router.post('/edit/:id', isAuthenticated, async (req, res, next) => {
       );
       const updatedUser = await User.findById(req.user._id).populate('stores');
 
-      console.log('UPDATED STORE', updatedStore);
-      console.log('UPDATED USER', updatedUser);
       return res.json({ updatedStore: updatedStore, updatedUser: updatedUser });
     } catch (error) {
       console.log(error);

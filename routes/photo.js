@@ -8,7 +8,6 @@ router.post('/', fileUploader.single('image'), (req, res, next) => {
     next(new Error('No file uploaded!'));
     return;
   }
-  console.log('this is file', req.file);
   res.json({ image: req.file.path });
 });
 
