@@ -7,8 +7,8 @@ const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
 const router = express.Router();
 
-const YOUR_DOMAIN = 'http://localhost:3000';
-// const YOUR_DOMAIN = 'https://main--rococo-semifreddo-f6db94.netlify.app';
+// const YOUR_DOMAIN = 'http://localhost:3000';
+const YOUR_DOMAIN = 'https://main--rococo-semifreddo-f6db94.netlify.app';
 
 router.post('/create-checkout-session', async (req, res) => {
   const cart = req.body.map((item) => {
@@ -31,8 +31,8 @@ router.post('/create-checkout-session', async (req, res) => {
     line_items: cart,
 
     mode: 'payment',
-    success_url: `${YOUR_DOMAIN}/order?success=true`,
-    cancel_url: `${YOUR_DOMAIN}/order?canceled=true`,
+    success_url: `${YOUR_DOMAIN}/cart?success=true`,
+    cancel_url: `${YOUR_DOMAIN}/cart?canceled=true`,
   });
 
   res.json({ url: session.url });
